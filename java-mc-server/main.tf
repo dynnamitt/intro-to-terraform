@@ -11,10 +11,20 @@ provider "aws" {
   region = "${var.region}"
 }
 
+# remote api query
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Environment"
-    values = "${var.environment}"
+    values = ["${var.environment}"]
+  }
+}
+
+# local disk relative
+data "terraform_remote_state" "x" {
+  backend = "local"
+
+  config {
+    path = "../single-web-server/terraform.tfstate"
   }
 }
 
@@ -25,6 +35,23 @@ data "aws_vpc" "selected" {
 resource "aws_security_group" "sg" {
   name   = "sg-java-mc"
   vpc_id = "${data.aws_vpc.selected.id}"
+
+  # Inbound HTTP from anywhere
+  ingress {
+    from_port   = "${var.server_port}"
+    to_port     = "${var.server_port}"
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Environment = "${var.environment}"
+  }
+}
+
+resource "aws_security_group" "sg2" {
+  name   = "sg-java-mc-test2"
+  vpc_id = "${data.terraform_remote_state.x.vpc_id}"
 
   # Inbound HTTP from anywhere
   ingress {
@@ -56,7 +83,7 @@ resource "aws_instance" "java-mc" {
               EOF
 
   tags {
-    Name        = "terraform-example"
+    Name        = "terraform-example-2"
     Environment = "${var.environment}"
   }
 }
