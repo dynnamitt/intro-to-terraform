@@ -60,7 +60,8 @@ module "vpc" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "instance" {
-  name = "terraform-example-instance"
+  name   = "terraform-example-instance"
+  vpc_id = "${module.vpc.vpc_id}"
 
   # Inbound HTTP from anywhere
   ingress {
