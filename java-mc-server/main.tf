@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------------------
 
 provider "aws" {
-  region = "us-east-1"
+  region = "${var.region}"
 }
 
 module "vpc" {
@@ -22,8 +22,8 @@ module "vpc" {
   database_subnets = [] #["10.1.201.0/24", "10.1.202.0/24", "10.1.203.0/24"]
   staticip_subnets = [] #["10.1.254.0/26", "10.1.254.64/26", "10.1.254.128/26"]
 
-  create_nat_gateway = "false"
-  create_vgw         = "false"
+  create_nat_gateway = "true"
+  create_vgw         = "true"
 
   # disabled if empty
   flowlogs_s3_bucket = ""
@@ -51,7 +51,8 @@ resource "aws_instance" "example" {
               EOF
 
   tags {
-    Name = "terraform-example"
+    Name        = "terraform-example"
+    Environment = "${var.environment}"
   }
 }
 
@@ -60,7 +61,8 @@ resource "aws_instance" "example" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_security_group" "instance" {
-  name = "terraform-example-instance"
+  name   = "terraform-example-instance"
+  vpc_id = "${module.vpc.vpc_id}"
 
   # Inbound HTTP from anywhere
   ingress {
@@ -68,5 +70,9 @@ resource "aws_security_group" "instance" {
     to_port     = "${var.server_port}"
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    Environment = "${var.environment}"
   }
 }

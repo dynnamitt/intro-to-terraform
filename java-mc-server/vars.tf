@@ -23,3 +23,8 @@ variable "costcenter" {
   description = "costcenter ...."
   default     = "lab"
 }
+
+variable "region" {
+  description = "region doh"
+  default     = "eu-west-1"
+}
