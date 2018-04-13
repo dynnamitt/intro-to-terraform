@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------------------
 
 provider "aws" {
-  region = "us-east-1"
+  region = "${var.region}"
 }
 
 module "vpc" {
@@ -23,7 +23,7 @@ module "vpc" {
   staticip_subnets = [] #["10.1.254.0/26", "10.1.254.64/26", "10.1.254.128/26"]
 
   create_nat_gateway = "false"
-  create_vgw         = "false"
+  create_vgw         = "true"
 
   # disabled if empty
   flowlogs_s3_bucket = ""
@@ -38,22 +38,22 @@ module "vpc" {
 # DEPLOY A SINGLE EC2 INSTANCE
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "aws_instance" "example" {
-  # Ubuntu Server 14.04 LTS (HVM), SSD Volume Type in us-east-1
-  ami                    = "ami-2d39803a"
-  instance_type          = "t2.micro"
-  vpc_security_group_ids = ["${aws_security_group.instance.id}"]
-
-  user_data = <<-EOF
-              #!/bin/bash
-              echo "Hello, World" > index.html
-              nohup busybox httpd -f -p "${var.server_port}" &
-              EOF
-
-  tags {
-    Name = "terraform-example"
-  }
-}
+# resource "aws_instance" "example" {
+#   # Ubuntu Server 14.04 LTS (HVM), SSD Volume Type in us-east-1
+#   ami                    = "ami-2d39803a"
+#   instance_type          = "t2.micro"
+#   vpc_security_group_ids = ["${aws_security_group.instance.id}"]
+#
+#   user_data = <<-EOF
+#               #!/bin/bash
+#               echo "Hello, World" > index.html
+#               nohup busybox httpd -f -p "${var.server_port}" &
+#               EOF
+#
+#   tags {
+#     Name = "terraform-example"
+#   }
+# }
 
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE THE SECURITY GROUP THAT'S APPLIED TO THE EC2 INSTANCE
@@ -68,5 +68,10 @@ resource "aws_security_group" "instance" {
     to_port     = "${var.server_port}"
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags {
+    "CostCenter"  = "${var.costcenter}"
+    "Environment" = "${var.environment}"
   }
 }

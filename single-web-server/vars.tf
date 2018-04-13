@@ -15,6 +15,11 @@ variable "server_port" {
   default     = 8080
 }
 
+variable "region" {
+  description = "region"
+  default     = "eu-west-1"
+}
+
 variable "environment" {
   description = "username"
 }
