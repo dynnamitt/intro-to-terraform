@@ -27,17 +27,17 @@ data "aws_availability_zones" "all" {}
 
 resource "aws_autoscaling_group" "example" {
   launch_configuration = "${aws_launch_configuration.example.id}"
-  availability_zones = ["${data.aws_availability_zones.all.names}"]
+  availability_zones   = ["${data.aws_availability_zones.all.names}"]
 
   min_size = 2
   max_size = 10
 
-  load_balancers = ["${aws_elb.example.name}"]
+  load_balancers    = ["${aws_elb.example.name}"]
   health_check_type = "ELB"
 
   tag {
-    key = "Name"
-    value = "terraform-asg-example"
+    key                 = "Name"
+    value               = "terraform-asg-example"
     propagate_at_launch = true
   }
 }
@@ -48,8 +48,8 @@ resource "aws_autoscaling_group" "example" {
 
 resource "aws_launch_configuration" "example" {
   # Ubuntu Server 14.04 LTS (HVM), SSD Volume Type in us-east-1
-  image_id = "ami-2d39803a"
-  instance_type = "t2.micro"
+  image_id        = "ami-2d39803a"
+  instance_type   = "t2.micro"
   security_groups = ["${aws_security_group.instance.id}"]
 
   user_data = <<-EOF
@@ -79,9 +79,9 @@ resource "aws_security_group" "instance" {
 
   # Inbound HTTP from anywhere
   ingress {
-    from_port = "${var.server_port}"
-    to_port = "${var.server_port}"
-    protocol = "tcp"
+    from_port   = "${var.server_port}"
+    to_port     = "${var.server_port}"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -98,23 +98,23 @@ resource "aws_security_group" "instance" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_elb" "example" {
-  name = "terraform-asg-example"
-  security_groups = ["${aws_security_group.elb.id}"]
+  name               = "terraform-asg-example"
+  security_groups    = ["${aws_security_group.elb.id}"]
   availability_zones = ["${data.aws_availability_zones.all.names}"]
 
   health_check {
-    healthy_threshold = 2
+    healthy_threshold   = 2
     unhealthy_threshold = 2
-    timeout = 3
-    interval = 30
-    target = "HTTP:${var.server_port}/"
+    timeout             = 3
+    interval            = 30
+    target              = "HTTP:${var.server_port}/"
   }
 
   # This adds a listener for incoming HTTP requests.
   listener {
-    lb_port = 80
-    lb_protocol = "http"
-    instance_port = "${var.server_port}"
+    lb_port           = 80
+    lb_protocol       = "http"
+    instance_port     = "${var.server_port}"
     instance_protocol = "http"
   }
 }
@@ -128,17 +128,17 @@ resource "aws_security_group" "elb" {
 
   # Allow all outbound
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Inbound HTTP from anywhere
   ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
