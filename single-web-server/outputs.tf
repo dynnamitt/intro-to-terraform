@@ -10,3 +10,8 @@ output "vpc_id" {
 output "subnets" {
   value = "${local.my_vpc["p_subnets"]}"
 }
+
+# just testing syntax
+output "S_BUMP" {
+  value = "Migrated state from local to s3"
+}
