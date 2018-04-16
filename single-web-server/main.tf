@@ -13,7 +13,7 @@ provider "aws" {
 
 module "vpc" {
   source          = "git@github.com:basefarm/bf_aws_mod_vpc"
-  name            = "${var.environment}"
+  name            = "${var.labenv}"
   cidr            = "10.0.0.0/16"
   azs             = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -30,10 +30,11 @@ module "vpc" {
 
   tags {
     "CostCenter"  = "${var.costcenter}"
-    "Environment" = "${var.environment}"
+    "Environment" = "${var.labenv}"
   }
 }
 
+# testing syntax
 locals {
   x = 1
 
@@ -81,6 +82,6 @@ resource "aws_security_group" "instance" {
 
   tags {
     "CostCenter"  = "${var.costcenter}"
-    "Environment" = "${var.environment}"
+    "Environment" = "${var.labenv}"
   }
 }

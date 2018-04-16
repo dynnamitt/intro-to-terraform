@@ -6,6 +6,7 @@ output "vpc_id" {
   value = "${module.vpc.vpc_id}"
 }
 
+# just testing syntax
 output "subnets" {
   value = "${local.my_vpc["p_subnets"]}"
 }
