@@ -20,9 +20,7 @@ variable "region" {
   default     = "eu-west-1"
 }
 
-variable "environment" {
-  description = "username"
-}
+variable "labenv" {}
 
 variable "costcenter" {
   description = "costcenter ...."
