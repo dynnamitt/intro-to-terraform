@@ -5,7 +5,9 @@
 terraform {
   backend "s3" {
     bucket = "tfstate-bf-kmidtlie"
-    key    = "single-web-server/terraform.tfstate"
+
+    # old legacy name
+    key = "single-web-server/terraform.tfstate"
 
     #dynamodb_table = "tfstatelock-bf-ruter-test"
     region = "eu-west-1"

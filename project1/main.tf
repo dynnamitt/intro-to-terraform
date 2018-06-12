@@ -24,6 +24,7 @@ locals {
 # DEPLOY A SINGLE EC2 INSTANCE
 # ---------------------------------------------------------------------------------------------------------------------
 
+
 # resource "aws_instance" "example" {
 #   # Ubuntu Server 14.04 LTS (HVM), SSD Volume Type in us-east-1
 #   ami                    = "ami-2d39803a"
@@ -41,24 +42,27 @@ locals {
 #   }
 # }
 
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE THE SECURITY GROUP THAT'S APPLIED TO THE EC2 INSTANCE
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource "aws_security_group" "instance" {
-  name   = "terraform-example-instance"
-  vpc_id = "${module.vpc.vpc_id}"
 
-  # Inbound HTTP from anywhere
-  ingress {
-    from_port   = "${var.server_port}"
-    to_port     = "${var.server_port}"
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+# resource "aws_security_group" "instance" {
+#   name   = "terraform-example-instance"
+#   vpc_id = "${module.vpc.vpc_id}"
+#
+#   # Inbound HTTP from anywhere
+#   ingress {
+#     from_port   = "${var.server_port}"
+#     to_port     = "${var.server_port}"
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#
+#   tags {
+#     "CostCenter"  = "${var.costcenter}"
+#     "Environment" = "${var.labenv}"
+#   }
+# }
 
-  tags {
-    "CostCenter"  = "${var.costcenter}"
-    "Environment" = "${var.labenv}"
-  }
-}
