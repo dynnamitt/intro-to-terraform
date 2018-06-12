@@ -11,20 +11,31 @@ provider "aws" {
   region = "${var.region}"
 }
 
-# remote api query
+# remote api query - TESING
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Environment"
-    values = ["${var.environment}"]
+    values = ["${var.labenv}"]
   }
 }
 
-# local disk relative
-data "terraform_remote_state" "x" {
-  backend = "local"
+# local disk relative, NOT in use now
+# data "terraform_remote_state" "x" {
+#   backend = "local"
+#
+#   config {
+#     path = "../single-web-server/terraform.tfstate"
+#   }
+# }
+
+# new remote version
+data "terraform_remote_state" "r_state" {
+  backend = "s3"
 
   config {
-    path = "../single-web-server/terraform.tfstate"
+    bucket = "tfstate-bf-kmidtlie"
+    key    = "single-web-server/terraform.tfstate"
+    region = "${var.region}"
   }
 }
 
@@ -45,13 +56,13 @@ resource "aws_security_group" "sg" {
   }
 
   tags {
-    Environment = "${var.environment}"
+    Environment = "${var.labenv}"
   }
 }
 
 resource "aws_security_group" "sg2" {
   name   = "sg-java-mc-test2"
-  vpc_id = "${data.terraform_remote_state.x.vpc_id}"
+  vpc_id = "${data.terraform_remote_state.r_state.vpc_id}"
 
   # Inbound HTTP from anywhere
   ingress {
@@ -62,7 +73,7 @@ resource "aws_security_group" "sg2" {
   }
 
   tags {
-    Environment = "${var.environment}"
+    Environment = "${var.labenv}"
   }
 }
 
@@ -84,6 +95,6 @@ resource "aws_instance" "java-mc" {
 
   tags {
     Name        = "terraform-example-2"
-    Environment = "${var.environment}"
+    Environment = "${var.labenv}"
   }
 }
